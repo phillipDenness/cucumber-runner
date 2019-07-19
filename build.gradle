@@ -20,6 +20,8 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-junit:' + cucumberVersion
     testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
     testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.1'
+    testCompile group: 'org.springframework', name: 'spring-context', version: '5.1.8.RELEASE'
+    testCompile group: 'io.cucumber', name: 'cucumber-spring', version: cucumberVersion
 }
 
 

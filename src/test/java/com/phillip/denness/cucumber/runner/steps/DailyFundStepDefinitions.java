@@ -1,7 +1,8 @@
-package phillip.denness.cucumber.runner.steps;
+package com.phillip.denness.cucumber.runner.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phillip.denness.cucumber.runner.DailyFundResponse;
+import com.phillip.denness.cucumber.runner.utils.TestUtils;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -11,7 +12,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import phillip.denness.cucumber.runner.utils.DateValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,13 +22,23 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class StepDefinitions {
+public class DailyFundStepDefinitions {
+
+    @Value("${endpoint.daily-fund.host}")
+    private String dailyFundHost;
+
+    @Value("${endpoint.daily-fund.port}")
+    private String dailyFundPort;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private TestUtils testUtils;
 
     private String trustnetUrl;
     private String citicode;
     private HttpResponse response;
-    private ObjectMapper mapper = new ObjectMapper();
-    private DateValidator dateValidator = new DateValidator();
     private DailyFundResponse dailyFundResponse;
     private CloseableHttpClient httpClient;
 
@@ -44,7 +56,7 @@ public class StepDefinitions {
     public void iSendARequestToTheDailyScraperWithCiticodeAsAQueryParam() throws URISyntaxException, IOException {
         httpClient = HttpClients.createDefault();
 
-        URIBuilder builder = new URIBuilder("http://localhost:5000/api/today")
+        URIBuilder builder = new URIBuilder(getDailyFundEndpoint())
                 .setParameter("citicode", citicode);
 
         sendRequestAndConvertDailyFundResponse(builder);
@@ -54,7 +66,7 @@ public class StepDefinitions {
     public void iSendARequestToTheDailyScraperWithTrustnetURLAndCiticodeAsAQueryParams() throws URISyntaxException, IOException {
         httpClient = HttpClients.createDefault();
 
-        URIBuilder builder = new URIBuilder("http://localhost:5000/api/today")
+        URIBuilder builder = new URIBuilder(getDailyFundEndpoint())
                 .setParameter("url", trustnetUrl)
                 .setParameter("citicode", citicode);
 
@@ -65,7 +77,7 @@ public class StepDefinitions {
     public void iSendARequestToTheDailyScraperWithTrustnetURLAsAQueryParam() throws IOException, URISyntaxException {
         httpClient = HttpClients.createDefault();
 
-        URIBuilder builder = new URIBuilder("http://localhost:5000/api/today")
+        URIBuilder builder = new URIBuilder(getDailyFundEndpoint())
                 .setParameter("url", trustnetUrl);
 
         sendRequestAndConvertDailyFundResponse(builder);
@@ -84,7 +96,7 @@ public class StepDefinitions {
 
     @And("I have a valid date")
     public void iHaveAValidDate() {
-        assertThat(dateValidator.isThisDateValid(dailyFundResponse.getDate(), "dd/MM/yyyy"), is(true));
+        assertThat(testUtils.isThisDateValid(dailyFundResponse.getDate(), "dd/MM/yyyy"), is(true));
     }
 
     @And("I have a valid fund name (.*)")
@@ -108,4 +120,9 @@ public class StepDefinitions {
         }
     }
 
+    private String getDailyFundEndpoint() {
+        return dailyFundHost + ":" + dailyFundPort + "/api/today";
+    }
+
+ 
 }

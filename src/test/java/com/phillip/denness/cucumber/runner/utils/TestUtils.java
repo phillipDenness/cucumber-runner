@@ -1,10 +1,13 @@
-package phillip.denness.cucumber.runner.utils;
+package com.phillip.denness.cucumber.runner.utils;
+
+import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateValidator {
+@Component
+public class TestUtils {
 
 	public boolean isThisDateValid(String dateToValidate, String dateFromat){
 		
