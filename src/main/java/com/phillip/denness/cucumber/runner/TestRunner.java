@@ -5,7 +5,6 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty"}, features="classpath:features",
-        glue = {"com/phillip/denness/cucumber/runner/steps"})
+@CucumberOptions(plugin = {"pretty"}, features="src/main/resources/features")
 public class TestRunner {
 }

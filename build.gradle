@@ -1,5 +1,23 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.3.RELEASE")
+    }
+}
+
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
 }
 
 group 'com.phillip.denness'
@@ -7,21 +25,36 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-}
 project.ext {
     cucumberVersion = '4.3.1'
-    springBootVersion = '2.1.6.RELEASE'
 }
 
 dependencies {
-    testImplementation 'io.cucumber:cucumber-java:' + cucumberVersion
-    testImplementation 'io.cucumber:cucumber-junit:' + cucumberVersion
-    testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
-    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.1'
-    testCompile group: 'org.springframework', name: 'spring-context', version: '5.1.8.RELEASE'
-    testCompile group: 'io.cucumber', name: 'cucumber-spring', version: cucumberVersion
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile "org.springframework.boot:spring-boot-configuration-processor"
+    compile 'io.cucumber:cucumber-java:' + cucumberVersion
+    compile 'io.cucumber:cucumber-junit:' + cucumberVersion
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.1'
+    compile group: 'io.cucumber', name: 'cucumber-spring', version: cucumberVersion
+
+    compile('org.springframework.boot:spring-boot-starter-test')
+    compile group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.6.RELEASE'
+
 }
 
 
+clean.doFirst {
+    delete "${rootDir}/out/"
+}
+
+bootJar {
+    baseName 'cucumber-runner'
+    archiveName = "$baseName"+".jar"
+    destinationDir = file("$rootDir/build/libs")
+    manifest {
+        mainClassName = 'com.phillip.denness.cucumber.runner.Application'
+        attributes 'Implementation-Title': project.name, 'Implementation-Version': project.version
+    }
+    requiresUnpack '**/cucumber-java-*.jar'
+}

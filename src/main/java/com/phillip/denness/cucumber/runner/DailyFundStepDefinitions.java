@@ -1,7 +1,8 @@
-package com.phillip.denness.cucumber.runner.steps;
+package com.phillip.denness.cucumber.runner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.phillip.denness.cucumber.runner.DailyFundResponse;
+import com.phillip.denness.cucumber.runner.config.DailyFundProperties;
+import com.phillip.denness.cucumber.runner.model.DailyFundResponse;
 import com.phillip.denness.cucumber.runner.utils.TestUtils;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -12,8 +13,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -22,13 +25,12 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DailyFundStepDefinitions {
 
-    @Value("${endpoint.daily-fund.host}")
-    private String dailyFundHost;
-
-    @Value("${endpoint.daily-fund.port}")
-    private String dailyFundPort;
+    @Autowired
+    private DailyFundProperties dailyFundProperties;
 
     @Autowired
     private ObjectMapper mapper;
@@ -121,7 +123,7 @@ public class DailyFundStepDefinitions {
     }
 
     private String getDailyFundEndpoint() {
-        return dailyFundHost + ":" + dailyFundPort + "/api/today";
+        return dailyFundProperties.getHost() + ":" + dailyFundProperties.getPort() + "/api/today";
     }
 
  

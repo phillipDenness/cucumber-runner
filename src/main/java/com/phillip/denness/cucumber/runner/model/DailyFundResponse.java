@@ -1,4 +1,4 @@
-package com.phillip.denness.cucumber.runner;
+package com.phillip.denness.cucumber.runner.model;
 
 import java.io.Serializable;
 
